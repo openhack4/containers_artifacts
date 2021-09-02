@@ -11,7 +11,6 @@ import (
 
 	"github.com/Azure/go-autorest/autorest/adal"
 	mssql "github.com/denisenkom/go-mssqldb"
-	// "github.com/Azure/go-autorest/autorest/azure/auth"
 )
 
 func getEnv(key, fallback string) string {
@@ -26,7 +25,7 @@ func writeConfigMessage(name string, value string, srcType string, src string) {
 	if value == "" {
 		msg = "no "
 	}
-	fmt.Printf("Config '%s' has %svalue set from %s '%s'.\n", name, msg, srcType, src)
+	fmt.Printf("Config '%s' has %s value set from %s '%s'.\n", name, msg, srcType, src)
 }
 
 func getConfigValue(name string, fallback string) string {
@@ -53,17 +52,20 @@ var (
 	port     = flag.Int("port", 1433, "the database port")
 	server   = flag.String("server", getConfigValue("SQL_SERVER", "changeme.database.windows.net"), "the database server")
 	database = flag.String("d", getConfigValue("SQL_DBNAME", "mydrivingDB"), "db_name")
-	// credential_method = flag.String("c", getConfigValue("CREDENTIAL_METHOD", "username_and_password"), "credential method") // username_and_password vs token (Be more explicit about it)
 )
 
 func getTokenProvider() (func() (string, error), error) {
-	msiEndpoint, err := adal.GetMSIEndpoint()
-	if err != nil {
-		return nil, err
+
+	options := adal.ManagedIdentityOptions{
+		// mutually exclusive set one or the other, not both.
+		ClientID:           getEnv("IDENTITY_CLIENT_ID", ""),
+		IdentityResourceID: getEnv("IDENTITY_RESOURCE_ID", ""),
 	}
-	// scoped to the database.windows.net
-	msi, err := adal.NewServicePrincipalTokenFromMSI(
-		msiEndpoint, "https://database.windows.net/")
+
+	resource := "https://database.windows.net/"
+
+	msi, err := adal.NewServicePrincipalTokenFromManagedIdentity(resource, &options)
+
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +79,7 @@ func getTokenProvider() (func() (string, error), error) {
 
 func getDBConnection() (*sql.DB, error) {
 	var conn *sql.DB
-	credential_method := getConfigValue("CREDENTIAL_METHOD", "username_and_password") // not utilized elsewhere.
+	credential_method := getEnv("CREDENTIAL_METHOD", "username_and_password") // not utilized elsewhere.
 	switch credential_method {
 
 	case "token":

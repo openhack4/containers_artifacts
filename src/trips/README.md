@@ -56,7 +56,9 @@ The value for a configuration variable may be specified via an environment varia
 | SQL_PASSWORD         | Yes      | ENV or File |               | The password for the SQL Server database.     |
 | SQL_SERVER           | Yes      | ENV or File |               | The server name for the SQL Server database.  |
 | SQL_DBNAME           | Yes      | ENV or File | mydrivingDB   | The name of the SQL Server database.          |
-| CREDENTIAL_METHOD           | No      | ENV or File | username_and_password   | Explicit credential process to access SQL DB. options: `username_and_password` or `token`       |
+| CREDENTIAL_METHOD           | No      | ENV | username_and_password   | Explicit credential process to access SQL DB. options: `username_and_password` or `token`       |
+| IDENTITY_CLIENT_ID           | No      | ENV |    | Required for `token` credential process to access SQL DB, _mutually exclusive with `IDENTITY_RESOURCE_ID`_|
+| IDENTITY_RESOURCE_ID           | No      | ENV |    | Required for `token` credential process to access SQL DB, _mutually exclusive with `IDENTITY_CLIENT_ID`_|
 | OPENAPI_DOCS_URI     | Yes      | ENV         |               | The external ip address and port of this api. This is used by the OpenAPI UI. |
 | DEBUG_LOGGING        | No       | ENV         | false         | Add debug logging.                            |
 
@@ -170,5 +172,5 @@ curl -i -X DELETE 'http://localhost:8080/api/trips/ea2f7ae0-3cef-49cb-b7d1-ce972
 Get healthcheck status
 
 ```bash
-curl -i -X GET 'http://localhost:8080/api/trips/healthcheck' 
+curl -i -X GET 'http://localhost:8080/api/trips/healthcheck'
 ```
