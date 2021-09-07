@@ -1,0 +1,286 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: trip-insights
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  namespace: trip-insights
+  name: sql-data
+data:
+  # echo -n 'postgres' | base64
+  # echo -n 'cG9zdGdyZXM=' | base64 -d
+  SQL_USER: c3FsYWRtaW55TGs5NzI4
+  # echo -n 'mysecretpassword' | base64
+  # echo -n 'bXlzZWNyZXRwYXNzd29yZA==' | base64 -d
+  SQL_PASSWORD: a0E1dW0yRGUz
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: trip-insights
+  name: user-java-deployment
+  labels:
+    app: user-java
+spec:
+  selector:
+    matchLabels:
+      app: user-java
+  template:
+    metadata:
+      labels:
+        app: user-java
+    spec:
+      containers:
+      - name: user-java
+        image: registryylk9728.azurecr.io/user-java:latest
+        env:
+        - name: SQL_SERVER
+          value: "sqlserverylk9728.database.windows.net"
+        - name: SQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: sql-data
+              key: SQL_USER
+        - name: SQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: sql-data
+              key: SQL_PASSWORD
+#        resources:
+#          requests:
+#            memory: "64Mi"
+#            cpu: "250m"
+#         limits:
+#            memory: "128Mi"
+#            cpu: "500m"
+        ports:
+        - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: trip-insights
+  name: user-java-service
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: user-java
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: trip-insights
+  name: poi-deployment
+  labels:
+    app: poi
+spec:
+  selector:
+    matchLabels:
+      app: poi
+  template:
+    metadata:
+      labels:
+        app: poi
+    spec:
+      containers:
+      - name: poi
+        image: registryylk9728.azurecr.io/poi:latest
+        env:
+        - name: SQL_SERVER
+          value: "sqlserverylk9728.database.windows.net"
+        - name: SQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: sql-data
+              key: SQL_USER
+        - name: SQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: sql-data
+              key: SQL_PASSWORD
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+#        resources:
+#          requests:
+#            memory: "64Mi"
+#            cpu: "250m"
+#         limits:
+#            memory: "128Mi"
+#            cpu: "500m"
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: trip-insights
+  name: poi-service
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: poi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: trip-insights
+  name: user-profile-deployment
+  labels:
+    app: user-profile
+spec:
+  selector:
+    matchLabels:
+      app: user-profile
+  template:
+    metadata:
+      labels:
+        app: user-profile
+    spec:
+      containers:
+      - name: user-profile
+        image: registryylk9728.azurecr.io/userprofile:latest
+        env:
+        - name: SQL_SERVER
+          value: "sqlserverylk9728.database.windows.net"
+        - name: SQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: sql-data
+              key: SQL_USER
+        - name: SQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: sql-data
+              key: SQL_PASSWORD
+#        resources:
+#          requests:
+#            memory: "64Mi"
+#            cpu: "250m"
+#         limits:
+#            memory: "128Mi"
+#            cpu: "500m"
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: trip-insights
+  name: user-profile-service
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: user-profile
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: trip-insights
+  name: trips-deployment
+  labels:
+    app: trips
+spec:
+  selector:
+    matchLabels:
+      app: trips
+  template:
+    metadata:
+      labels:
+        app: trips
+    spec:
+      containers:
+      - name: trips
+        image: registryylk9728.azurecr.io/trips:latest
+        env:
+        - name: SQL_SERVER
+          value: "sqlserverylk9728.database.windows.net"
+        - name: SQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: sql-data
+              key: SQL_USER
+        - name: SQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: sql-data
+              key: SQL_PASSWORD
+#        resources:
+#          requests:
+#            memory: "64Mi"
+#            cpu: "250m"
+#         limits:
+#            memory: "128Mi"
+#            cpu: "500m"
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: trip-insights
+  name: trips-service
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: trips
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: trip-insights
+  name: trip-viewer-deployment
+  labels:
+    app: trip-viewer
+spec:
+  selector:
+    matchLabels:
+      app: trip-viewer
+  template:
+    metadata:
+      labels:
+        app: trip-viewer
+    spec:
+      containers:
+      - name: trip-viewer
+        image: registryylk9728.azurecr.io/tripviewer:latest
+        env:
+        - name: TRIPS_API_ENDPOINT
+          value: "http://trips-service.trip-insights.svc.cluster.local"
+        - name: USERPROFILE_API_ENDPOINT
+          value: "http://user-profile-service.trip-insights.svc.cluster.local"
+#        resources:
+#          requests:
+#            memory: "64Mi"
+#            cpu: "250m"
+#         limits:
+#            memory: "128Mi"
+#            cpu: "500m"
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: trip-insights
+  name: trip-viewer-service
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: trip-viewer
+
