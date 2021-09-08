@@ -1,25 +1,27 @@
 kind: Namespace
 apiVersion: v1
 metadata:
-  name: trip-insights
+  name: web-dev
+---
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: api-dev
 ---
 apiVersion: v1
 kind: Secret
 metadata:
-  namespace: trip-insights
+  namespace: api-dev
   name: sql-data
 data:
-  # echo -n 'postgres' | base64
-  # echo -n 'cG9zdGdyZXM=' | base64 -d
-  SQL_USER: c3FsYWRtaW55TGs5NzI4
   # echo -n 'mysecretpassword' | base64
-  # echo -n 'bXlzZWNyZXRwYXNzd29yZA==' | base64 -d
+  SQL_USER: c3FsYWRtaW55TGs5NzI4
   SQL_PASSWORD: a0E1dW0yRGUz
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: trip-insights
+  namespace:  api-dev
   name: user-java-deployment
   labels:
     app: user-java
@@ -62,7 +64,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: trip-insights
+  namespace: api-dev
   name: user-java-service
 spec:
   ports:
@@ -75,7 +77,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: trip-insights
+  namespace:  api-dev
   name: poi-deployment
   labels:
     app: poi
@@ -119,7 +121,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: trip-insights
+  namespace:  api-dev
   name: poi-service
 spec:
   ports:
@@ -131,7 +133,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: trip-insights
+  namespace:  api-dev
   name: user-profile-deployment
   labels:
     app: user-profile
@@ -173,7 +175,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: trip-insights
+  namespace: api-dev
   name: user-profile-service
 spec:
   ports:
@@ -185,7 +187,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: trip-insights
+  namespace: api-dev
   name: trips-deployment
   labels:
     app: trips
@@ -227,7 +229,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: trip-insights
+  namespace: api-dev
   name: trips-service
 spec:
   ports:
@@ -240,7 +242,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: trip-insights
+  namespace: web-dev
   name: trip-viewer-deployment
   labels:
     app: trip-viewer
@@ -258,9 +260,9 @@ spec:
         image: registryylk9728.azurecr.io/tripviewer:latest
         env:
         - name: TRIPS_API_ENDPOINT
-          value: "http://trips-service.trip-insights.svc.cluster.local"
+          value: "http://trips-service.api-dev.svc.cluster.local"
         - name: USERPROFILE_API_ENDPOINT
-          value: "http://user-profile-service.trip-insights.svc.cluster.local"
+          value: "http://user-profile-service.api-dev.svc.cluster.local"
 #        resources:
 #          requests:
 #            memory: "64Mi"
@@ -274,7 +276,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: trip-insights
+  namespace: web-dev
   name: trip-viewer-service
 spec:
   type: LoadBalancer
