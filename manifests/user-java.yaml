@@ -333,3 +333,63 @@ subjects:
 - kind: Group
   namespace: api-dev
   name: 547ea1b8-e988-4223-a015-7711894d0966 # AZ Directory Group: AKS Api Devs
+---
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: api-ingress
+  namespace: api-dev
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /api/poi
+        pathType: Prefix
+        backend:
+          service:
+            name: poi-service
+            port:
+              number: 80
+      - path: /api/trips
+        pathType: Prefix
+        backend:
+          service:
+            name: trips-service
+            port:
+              number: 80
+      - path: /api/user
+        pathType: Prefix
+        backend:
+          service:
+            name: user-profile-service
+            port:
+              number: 80
+      - path: /api/user-java
+        pathType: Prefix
+        backend:
+          service:
+            name: user-java-service
+            port:
+              number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: web-ingress
+  namespace: web-dev
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: trip-viewer-service
+            port:
+              number: 80
