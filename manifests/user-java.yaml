@@ -414,9 +414,9 @@ spec:
       secretName: "kv-secrets"
       type: Opaque
   parameters:
-    usePodIdentity: false
-    useVMManagedIdentity: true
-    userAssignedIdentityID: "d2b8188c-5621-4baa-83bc-85a7a98e0a81"
+    usePodIdentity: "false"
+    useVMManagedIdentity: "true"
+    userAssignedIdentityID: "1663996e-8ec9-48ec-9fee-cdc6dfb12d7d"
     keyvaultName: "tripinsightskv"
     objects: |
       array:
