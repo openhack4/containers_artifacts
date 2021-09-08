@@ -15,8 +15,8 @@ metadata:
   name: sql-data
 data:
   # echo -n 'mysecretpassword' | base64
-  SQL_USER: c3FsYWRtaW55TGs5NzI4
-  SQL_PASSWORD: a0E1dW0yRGUz
+  SQL_USER: bGl4bw==
+  SQL_PASSWORD: bGl4bw==
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -43,12 +43,12 @@ spec:
         - name: SQL_USER
           valueFrom:
             secretKeyRef:
-              name: sql-data
+              name: vksecrets
               key: SQL_USER
         - name: SQL_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: sql-data
+              name: vksecrets
               key: SQL_PASSWORD
 #        resources:
 #          requests:
@@ -99,12 +99,12 @@ spec:
         - name: SQL_USER
           valueFrom:
             secretKeyRef:
-              name: sql-data
+              name: vksecrets
               key: SQL_USER
         - name: SQL_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: sql-data
+              name: vksecrets
               key: SQL_PASSWORD
         - name: ASPNETCORE_ENVIRONMENT
           value: Development
@@ -155,12 +155,12 @@ spec:
         - name: SQL_USER
           valueFrom:
             secretKeyRef:
-              name: sql-data
+              name: vksecrets
               key: SQL_USER
         - name: SQL_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: sql-data
+              name: vksecrets
               key: SQL_PASSWORD
 #        resources:
 #          requests:
@@ -209,12 +209,12 @@ spec:
         - name: SQL_USER
           valueFrom:
             secretKeyRef:
-              name: sql-data
+              name: vksecrets
               key: SQL_USER
         - name: SQL_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: sql-data
+              name: vksecrets
               key: SQL_PASSWORD
 #        resources:
 #          requests:
@@ -397,3 +397,35 @@ spec:
             name: trip-viewer-service
             port:
               number: 80
+---
+apiVersion: secrets-store.csi.x-k8s.io/v1alpha1
+kind: SecretProviderClass
+metadata:
+  name: azure-kvname
+  namespace: api-dev
+spec:
+  provider: azure
+  secretObjects:
+    - data:
+      - key: SQL_PASSWORD
+        objectName: SQL_PASSWORD
+      - key: SQL_USER
+        objectName: SQL_USER
+      secretName: "vksecrets"
+      type: Opaque
+  parameters:
+    usePodIdentity: "false"
+    useVMManagedIdentity: "true"
+    userAssignedIdentityID: "d2b8188c-5621-4baa-83bc-85a7a98e0a81"
+    keyvaultName: "tripinsightskv"
+    objects: |
+      array:
+        - |
+          objectName: SQL-PASSWORD
+          objectAlias: SQL_PASSWORD
+          objectType: secret
+        - |
+          objectName: SQL-USER
+          objectAlias: SQL_USER
+          objectType: secret
+    tenantId: "4bf5b635-285a-4966-83bd-6ee1ec7e7913"
