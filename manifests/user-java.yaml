@@ -43,12 +43,12 @@ spec:
         - name: SQL_USER
           valueFrom:
             secretKeyRef:
-              name: vksecrets
+              name: kv-secrets
               key: SQL_USER
         - name: SQL_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: vksecrets
+              name: kv-secrets
               key: SQL_PASSWORD
 #        resources:
 #          requests:
@@ -99,12 +99,12 @@ spec:
         - name: SQL_USER
           valueFrom:
             secretKeyRef:
-              name: vksecrets
+              name: kv-secrets
               key: SQL_USER
         - name: SQL_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: vksecrets
+              name: kv-secrets
               key: SQL_PASSWORD
         - name: ASPNETCORE_ENVIRONMENT
           value: Development
@@ -155,12 +155,12 @@ spec:
         - name: SQL_USER
           valueFrom:
             secretKeyRef:
-              name: vksecrets
+              name: kv-secrets
               key: SQL_USER
         - name: SQL_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: vksecrets
+              name: kv-secrets
               key: SQL_PASSWORD
 #        resources:
 #          requests:
@@ -209,12 +209,12 @@ spec:
         - name: SQL_USER
           valueFrom:
             secretKeyRef:
-              name: vksecrets
+              name: kv-secrets
               key: SQL_USER
         - name: SQL_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: vksecrets
+              name: kv-secrets
               key: SQL_PASSWORD
 #        resources:
 #          requests:
@@ -411,11 +411,11 @@ spec:
         objectName: SQL_PASSWORD
       - key: SQL_USER
         objectName: SQL_USER
-      secretName: "vksecrets"
+      secretName: "kv-secrets"
       type: Opaque
   parameters:
-    usePodIdentity: "false"
-    useVMManagedIdentity: "true"
+    usePodIdentity: false
+    useVMManagedIdentity: true
     userAssignedIdentityID: "d2b8188c-5621-4baa-83bc-85a7a98e0a81"
     keyvaultName: "tripinsightskv"
     objects: |
