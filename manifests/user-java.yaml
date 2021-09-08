@@ -334,14 +334,13 @@ subjects:
   namespace: api-dev
   name: 547ea1b8-e988-4223-a015-7711894d0966 # AZ Directory Group: AKS Api Devs
 ---
----
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: api-ingress
   namespace: api-dev
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    kubernetes.io/ingress.class: nginx
 spec:
   rules:
   - http:
@@ -381,8 +380,13 @@ metadata:
   name: web-ingress
   namespace: web-dev
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    kubernetes.io/ingress.class: nginx
 spec:
+  defaultBackend:
+    service:
+      name: trip-viewer-service
+      port:
+        number: 80
   rules:
   - http:
       paths:
