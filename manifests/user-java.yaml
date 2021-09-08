@@ -296,3 +296,40 @@ rules:
     resources: ["*"]
     verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 ---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: web-dev-group-access
+  namespace: web-dev
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: web-dev-role
+subjects:
+- kind: Group
+  namespace: web-dev
+  name: ce966c67-8b78-4f51-a611-7c54da0fbf14 # AZ Directory Group: AKS Web Devs
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: api-dev-role
+  namespace: api-dev
+rules:
+  - apiGroups: ["*"]
+    resources: ["*"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: api-dev-group-access
+  namespace: api-dev
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: api-dev-role
+subjects:
+- kind: Group
+  namespace: api-dev
+  name: 547ea1b8-e988-4223-a015-7711894d0966 # AZ Directory Group: AKS Api Devs
