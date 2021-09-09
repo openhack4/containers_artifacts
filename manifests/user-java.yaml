@@ -429,3 +429,29 @@ spec:
           objectAlias: SQL_USER
           objectType: secret
     tenantId: "4bf5b635-285a-4966-83bd-6ee1ec7e7913"
+    
+----
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: web-dev-policy
+  namespace: web-dev
+spec:
+  podSelector:
+    matchLabels:
+      app: trip-viewer
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: api-dev
+    ports:
+      - protocol: TCP
+        port: 80
+  - to:
+    ports:
+      - protocol: UDP
+        port: 53
+
